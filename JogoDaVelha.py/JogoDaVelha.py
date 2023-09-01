@@ -1,3 +1,6 @@
+# Gustavo Godoi da Silva; RM: 99585
+# Amorgan mendes Lopes; RM: 98552
+
 import random
 
 tabuleiro =[[" ", " ", " "],
@@ -17,7 +20,7 @@ def imprimeMenuPrincipal():
     return escolha
 
 # Escolher o simbolo que deseja jogar ("X" OU "O")
-def escolha_simbolo():
+def escolhaSimbolo():
     print('''
 (1) pra X
 (2) pra O
@@ -26,7 +29,7 @@ def escolha_simbolo():
     return escolha_simbolo
 
 # Verificar Vitoria em (linhas, colunas e diagonais)
-def verificar_vitoria(tabuleiro, jogador):
+def verificaVencedor(tabuleiro, jogador):
     for i in range(3):
         # Verificar se todas as posições na linha atual são iguais ao jogador
         if all(pos == jogador for pos in tabuleiro[i]):
@@ -40,7 +43,7 @@ def verificar_vitoria(tabuleiro, jogador):
     if all(tabuleiro[i][i] == jogador for i in range(3)):
         return True  # Jogador ganhou na diagonal principal
 
-    if all(tabuleiro[i][2 - i] == jogador for i in range(3)):
+    if all(tabuleiro[i][2-i] == jogador for i in range(3)):
         return True  # Jogador ganhou na diagonal secundária
     return False  # Nenhum padrão de vitória foi encontrado
 
@@ -95,7 +98,7 @@ def escolhaDificuldade():
     escolha_dificuldade = int(input("Escolha: "))
     return escolha_dificuldade
 
-# 
+# Modo nde a maquina recebe inteligencia
 def modoDificil():
     print("Em desenvolvimeto...")
 
@@ -104,15 +107,17 @@ def jogadaMaquinaFacil():
   while True:
     linha = random.randint(0, 2)
     coluna = random.randint(0, 2)
+
     if tabuleiro[linha][coluna] == " ":
       return linha, coluna
 
+# Função onde ta o o (principal) jogador x jogador
 def modoJogador():
     global tabuleiro
     # Mostrar Placar
     pontuacao = {'X': 0, 'O': 0}
     # Escolha simbolo
-    jogador_x = "X" if escolha_simbolo() == 1 else "O"
+    jogador_x = "X" if escolhaSimbolo() == 1 else "O"
     jogador_o = "O" if jogador_x == "X" else "X"
 
     # Modo escolido
@@ -143,13 +148,13 @@ def modoJogador():
               print("Posição já ocupada. Tente novamente.")
           else:
             print("Coordenadas inválidas. Tente novamente.")
-
-        if verificar_vitoria(tabuleiro, jogador_x):
+        # Verifica caso o jogador x ganha
+        if verificaVencedor(tabuleiro, jogador_x):
           print(f"Jogador {jogador_x} venceu!")
           atualizar_pontuacao(pontuacao, jogador_x)
           tabuleiro = [[" ", " ", " "],[" ", " ", " "],[" ", " ", " "]]
           break
-
+        # Verifica caso o jogo empate
         if verificaVelha(tabuleiro):
             print("Jogo empatou!")
             tabuleiro = [[" ", " ", " "],[" ", " ", " "],[" ", " ", " "]]
@@ -170,18 +175,18 @@ def modoJogador():
               print("Posição já ocupada. Tente novamente.")
           else:
             print("Coordenadas inválidas. Tente novamente.")
-
-        if verificar_vitoria(tabuleiro, jogador_o):
+        # Verifica caso o jogador O ganha
+        if verificaVencedor(tabuleiro, jogador_o):
           print(f"Jogador {jogador_o} venceu!")
           atualizar_pontuacao(pontuacao, jogador_o)
           tabuleiro = [[" ", " ", " "],[" ", " ", " "],[" ", " ", " "]]
           break
-
+        # Verifica caso o jogo empate
         if verificaVelha(tabuleiro):
             print("Jogo empatou!")
-            break
             tabuleiro = [[" ", " ", " "],[" ", " ", " "],[" ", " ", " "]]
-        
+            break
+        # Mensagem após as três partidas
       print(f"Partida encerrada! Pontuação atual:")
       imprimir_pontuacao(pontuacao)
     # Pegar o jogador com a pontuação mais alta e atribui esse jogador à variável 
@@ -189,31 +194,34 @@ def modoJogador():
     print(f"Melhor de 3 encerrado! O jogador {vencedor} venceu!")
     imprimir_pontuacao(pontuacao)
 
+# Função onde ta o o (principal) jogador x maquina
 def modoFacil():
   jogador = "X" 
   while True:
         imprimirTabuleiro(tabuleiro)
         print(f"Jogador {jogador} é sua vez:")
         if jogador == "X":
-            while True:
-                linha = leiaCoordenadasLinha()
-                coluna = leiaCoordenadasColuna()
-                if 1 <= linha <= 3 and 1 <= coluna <= 3:
-                    if tabuleiro[linha - 1][coluna - 1] == " ":
-                        jogar(linha, coluna, jogador)
-                        break
-                else:
-                    print("Posição já ocupada. Tente novamente.")
-            else:
-                print("Coordenadas inválidas. Tente novamente.")
+                while True:
+                    # Jogadas do jogador coso esteja tido certo adiciona no tabuleiro
+                    linha = leiaCoordenadasLinha()
+                    coluna = leiaCoordenadasColuna()
+                    if 1 <= linha <= 3 and 1 <= coluna <= 3:
+                        if 1 <= linha <= 3 and 1 <= coluna <= 3:
+                            if tabuleiro[linha - 1][coluna - 1] == " ":
+                                jogar(linha, coluna, jogador)
+                                break
+                            else:
+                                print("Posição já ocupada. Tente novamente.")
+                    else:
+                        print("Coordenadas inválidas. Tente novamente.")
         else:
+            # Jogadas da maquina
             linha, coluna = jogadaMaquinaFacil()
             if tabuleiro[linha][coluna] == " ":
                 jogar(linha, coluna, jogador)
             else:
                 continue
-        imprimirTabuleiro(tabuleiro)
-        if verificar_vitoria(tabuleiro, jogador):
+        if verificaVencedor(tabuleiro, jogador):
             print(f"Jogador {jogador} venceu!")
             break
         elif verificaVelha(tabuleiro):
@@ -221,6 +229,7 @@ def modoFacil():
             break
         jogador = "X" if jogador == "O" else "O"        
 
+# Função para mostrar o programa
 def exibir():
      escolha_dificuldade = 0
      escolha_menu = 0
